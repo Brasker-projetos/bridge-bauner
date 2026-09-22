@@ -46,9 +46,14 @@ body {
 .marca { display: flex; align-items: center; gap: 16px; min-width: 0; }
 .marca-logo { height: 30px; width: auto; display: block; }
 .divisor { width: 1px; height: 30px; background: var(--linha); }
-.produto { display: flex; flex-direction: column; line-height: 1.25; min-width: 0; }
-.produto strong { font-size: 15.5px; font-weight: 600; letter-spacing: -.01em; }
-.produto span { font-size: 12.5px; color: var(--suave); }
+.produto {
+  font-size: 25px; font-weight: 700; letter-spacing: -.03em;
+  color: var(--tinta); line-height: 1.1; white-space: nowrap;
+}
+.produto span {
+  background: linear-gradient(95deg, var(--azul) 15%, var(--rosa) 95%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
 .selo {
   display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
   background: var(--linha-clara); color: var(--tinta-media);
@@ -57,7 +62,8 @@ body {
 }
 
 /* ---------- etapas ---------- */
-.etapas { border-top: 1px solid var(--linha-clara); background: #fafbfd; }
+/* linha que separa o título da trilha de etapas */
+.etapas { border-top: 1px solid var(--linha); background: #fafbfd; }
 .etapas ol {
   display: flex; flex-wrap: wrap; gap: 28px;
   list-style: none; margin: 0; padding: 0;
@@ -84,7 +90,11 @@ main { max-width: 1120px; margin: 0 auto; padding: 28px 24px 8px; }
   background: var(--papel); border: 1px solid var(--linha); border-radius: 10px;
   padding: 26px 28px; margin-bottom: 20px;
 }
-.painel-topo { margin-bottom: 20px; }
+/* linha que separa o título da seção dos cartões de arquivo */
+.painel-topo {
+  margin-bottom: 22px; padding-bottom: 18px;
+  border-bottom: 1px solid var(--linha-clara);
+}
 .etiqueta {
   display: inline-block; font-size: 11px; font-weight: 700;
   letter-spacing: .09em; text-transform: uppercase; color: var(--azul);
