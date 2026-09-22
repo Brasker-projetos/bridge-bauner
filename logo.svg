@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 132 132" role="img" aria-label="Brasker">
+  <defs>
+    <linearGradient id="azul" x1="18" y1="8" x2="104" y2="78" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#63C8F7"/>
+      <stop offset="1" stop-color="#3D8BE8"/>
+    </linearGradient>
+    <linearGradient id="rosa" x1="10" y1="92" x2="118" y2="128" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FF77C0"/>
+      <stop offset="1" stop-color="#F45BA6"/>
+    </linearGradient>
+    <linearGradient id="mistura" x1="24" y1="60" x2="112" y2="118" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2F7BD8"/>
+      <stop offset="1" stop-color="#3C6FD0"/>
+    </linearGradient>
+    <clipPath id="marca">
+      <path d="M12 14a14 14 0 0 1 28 0v20h30a46 46 0 0 1 0 92H12z"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#marca)">
+    <rect x="0" y="0" width="132" height="132" fill="url(#azul)"/>
+    <rect x="0" y="86" width="132" height="46" fill="url(#rosa)"/>
+    <path d="M40 34h30a46 46 0 0 1 32 78H40z" fill="url(#mistura)" opacity=".92"/>
+  </g>
+</svg>

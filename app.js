@@ -13,6 +13,8 @@ const CAMPOS = {
 
 const dados = {};
 const $ = (s) => document.querySelector(s);
+const passo = (n) => document.querySelectorAll('.trilha li').forEach((li, i) => li.classList.toggle('ativo', i <= n - 1));
+
 const dinheiro = (n) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
 function lerPlanilha(arquivo) {
@@ -121,6 +123,7 @@ function mostrar(r) {
   });
   $('#resultado').hidden = false;
   $('#etapa2').hidden = false;
+  passo(2);
   $('#resultado').scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -160,6 +163,7 @@ function mostrar2(r) {
     b.onclick = () => baixar(b.dataset.nome, periodo);
   });
   $('#resultado2').hidden = false;
+  passo(3);
 }
 
 function baixar(nome, periodo) {
@@ -249,6 +253,7 @@ $('#gerarCarga').onclick = () => {
     b.onclick = () => { baixar(b.dataset.nome, 'carga'); b.classList.add('usado'); };
   });
   $('#resultadoCarga').hidden = false;
+  passo(4);
 };
 
 $('#gerar2').onclick = () => {
