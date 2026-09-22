@@ -6,6 +6,7 @@
     "exceljs": "^4.4.0"
   },
   "dependencies": {
+    "pngjs": "^7.0.0",
     "xlsx": "^0.18.5"
   }
 }

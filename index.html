@@ -4,164 +4,189 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bridge Bauner</title>
-<link rel="icon" href="logo.svg">
+<link rel="icon" href="simbolo-brasker.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
 
+<svg class="sprite" aria-hidden="true">
+  <symbol id="i-vendas" viewBox="0 0 24 24"><path d="M3 20h18M6 16V9m5 7V5m5 11v-5"/></symbol>
+  <symbol id="i-clientes" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0M16 11.2A3 3 0 0 0 16 5m4.5 14a4.7 4.7 0 0 0-3.2-4.4"/></symbol>
+  <symbol id="i-base" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7.5" ry="3"/><path d="M4.5 6v12c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3V6M4.5 12c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3"/></symbol>
+  <symbol id="i-receber" viewBox="0 0 24 24"><rect x="2.5" y="5.5" width="19" height="13" rx="2.5"/><circle cx="12" cy="12" r="2.8"/><path d="M6 12h.01M18 12h.01"/></symbol>
+  <symbol id="i-atualizar" viewBox="0 0 24 24"><path d="M20.5 12a8.5 8.5 0 0 1-14.6 6M3.5 12a8.5 8.5 0 0 1 14.6-6"/><path d="M18.1 2.5V6H14.6M5.9 21.5V18h3.5"/></symbol>
+  <symbol id="i-cofre" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="15" rx="2"/><circle cx="12" cy="12" r="3.5"/><path d="M12 6.5v2M12 15.5v2M17.5 12h2"/></symbol>
+</svg>
+
 <header class="topo">
-  <div class="topo-conteudo">
+  <div class="faixa">
     <div class="marca">
-      <img src="logo.svg" alt="" class="marca-simbolo">
-      <span class="marca-texto">
-        <span class="marca-nome">brasker<em>digital</em></span>
-        <span class="marca-unidade">BPO Financeiro</span>
+      <img src="logo-brasker.png" alt="Brasker digital" class="marca-logo">
+      <span class="divisor"></span>
+      <span class="produto">
+        <strong>Bridge Bauner</strong>
+        <span>Velo Vix · Importação para o Bauner</span>
       </span>
     </div>
-    <span class="selo"><span class="ponto"></span> Processa tudo neste computador</span>
+    <span class="selo" title="Os arquivos são lidos no navegador e não são enviados para nenhum servidor">
+      <svg viewBox="0 0 24 24" class="icone-selo"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>
+      Processamento local
+    </span>
   </div>
+
+  <nav class="etapas" aria-label="Progresso">
+    <div class="faixa">
+      <ol>
+        <li class="ativo"><span class="n">1</span> Arquivos do período</li>
+        <li><span class="n">2</span> Conferência</li>
+        <li><span class="n">3</span> Baixa dos títulos</li>
+        <li><span class="n">4</span> Carga de clientes</li>
+      </ol>
+    </div>
+  </nav>
 </header>
 
-<div class="capa">
-  <div class="capa-conteudo">
-    <h1>Bridge <span>Bauner</span></h1>
-    <p>A ponte entre o Angular e o Bauner. Suba os relatórios e baixe as planilhas prontas para importar, sem copiar, colar ou formatar nada.</p>
-    <ol class="trilha">
-      <li class="ativo"><span>1</span> Arquivos</li>
-      <li><span>2</span> Conferência</li>
-      <li><span>3</span> Baixa</li>
-      <li><span>4</span> Carga única</li>
-    </ol>
-  </div>
-</div>
-
 <main>
-  <section class="cartao-secao">
-    <div class="cabecalho-secao">
-      <h2>Etapa 1 — Clientes e contas a receber</h2>
-      <p>Os quatro relatórios que você já baixa. O quinto é opcional e serve para achar aluno antigo.</p>
+  <section class="painel">
+    <div class="painel-topo">
+      <div>
+        <span class="etiqueta">Etapa 1</span>
+        <h2>Clientes e contas a receber</h2>
+        <p>Os quatro relatórios que você já baixa toda semana. O quinto é opcional e serve para localizar aluno antigo.</p>
+      </div>
     </div>
 
     <div class="arquivos">
       <label class="arquivo" data-campo="vendas">
         <input type="file" accept=".xlsx,.xls" hidden>
-        <span class="icone" aria-hidden="true">📈</span>
+        <span class="quadro"><svg class="ic"><use href="#i-vendas"/></svg></span>
         <span class="titulo">Vendas realizadas</span>
         <span class="fonte">Angular · todos os status</span>
-        <span class="estado">clique ou arraste o arquivo</span>
+        <span class="estado">Selecionar arquivo</span>
       </label>
       <label class="arquivo" data-campo="clientesPeriodo">
         <input type="file" accept=".xlsx,.xls" hidden>
-        <span class="icone" aria-hidden="true">🧾</span>
+        <span class="quadro"><svg class="ic"><use href="#i-clientes"/></svg></span>
         <span class="titulo">Clientes do período</span>
         <span class="fonte">Angular</span>
-        <span class="estado">clique ou arraste o arquivo</span>
+        <span class="estado">Selecionar arquivo</span>
       </label>
       <label class="arquivo" data-campo="clientesBauner">
         <input type="file" accept=".xlsx,.xls" hidden>
-        <span class="icone" aria-hidden="true">👥</span>
+        <span class="quadro"><svg class="ic"><use href="#i-cofre"/></svg></span>
         <span class="titulo">Clientes cadastrados</span>
         <span class="fonte">Bauner</span>
-        <span class="estado">clique ou arraste o arquivo</span>
+        <span class="estado">Selecionar arquivo</span>
       </label>
       <label class="arquivo" data-campo="contasBauner">
         <input type="file" accept=".xlsx,.xls" hidden>
-        <span class="icone" aria-hidden="true">💰</span>
+        <span class="quadro"><svg class="ic"><use href="#i-receber"/></svg></span>
         <span class="titulo">Contas a receber</span>
         <span class="fonte">Bauner · todos os status</span>
-        <span class="estado">clique ou arraste o arquivo</span>
+        <span class="estado">Selecionar arquivo</span>
       </label>
       <label class="arquivo opcional" data-campo="clientesBase">
         <input type="file" accept=".xlsx,.xls" hidden>
-        <span class="icone" aria-hidden="true">🗂️</span>
+        <span class="quadro"><svg class="ic"><use href="#i-base"/></svg></span>
         <span class="titulo">Base inteira de clientes</span>
         <span class="fonte">Angular</span>
-        <span class="estado">clique ou arraste o arquivo</span>
+        <span class="estado">Selecionar arquivo</span>
       </label>
     </div>
 
-    <div class="barra-acao">
-      <div class="periodo">
+    <div class="rodape-painel">
+      <div class="campos">
         <label>Início <input type="date" id="inicio"></label>
         <label>Fim <input type="date" id="fim"></label>
-        <span class="dica" id="dicaPeriodo">o período vem sugerido pelo relatório do Bauner</span>
+        <span class="dica" id="dicaPeriodo">Período sugerido pelo relatório do Bauner</span>
       </div>
       <button id="gerar" class="principal" disabled>Gerar planilhas</button>
     </div>
     <p class="aviso" id="aviso"></p>
   </section>
 
-  <section class="cartao-secao" id="resultado" hidden>
-    <div class="cabecalho-secao">
-      <h2>Conferência da rodada</h2>
-      <p>Toda venda do arquivo termina em um destino. Nada fica para trás sem explicação.</p>
+  <section class="painel" id="resultado" hidden>
+    <div class="painel-topo">
+      <div>
+        <span class="etiqueta">Etapa 2</span>
+        <h2>Conferência da rodada</h2>
+        <p>Cada venda do arquivo termina em um destino. Nada fica para trás sem explicação.</p>
+      </div>
     </div>
-    <div class="cartoes" id="cartoes"></div>
-    <div class="tabela-caixa"><table id="motivos"></table></div>
+    <div class="indicadores" id="cartoes"></div>
+    <div class="tabela" id="caixaMotivos"><table id="motivos"></table></div>
     <p class="fechamento" id="fechamento"></p>
     <div class="baixar" id="baixar"></div>
-    <p class="proximo">No Bauner, importe <strong>primeiro os clientes</strong> e depois as contas a receber. Em seguida exporte de novo o relatório de contas a receber e volte aqui para a baixa.</p>
+    <p class="nota">No Bauner, importe <strong>primeiro os clientes</strong> e depois as contas a receber. Em seguida exporte o relatório de contas a receber outra vez e volte para a etapa 3.</p>
   </section>
 
-  <section class="cartao-secao" id="etapa2" hidden>
-    <div class="cabecalho-secao">
-      <h2>Etapa 2 — Contas recebidas</h2>
-      <p>Esta é a baixa dos títulos, e é ela que faz o Bauner emitir as notas.</p>
+  <section class="painel" id="etapa2" hidden>
+    <div class="painel-topo">
+      <div>
+        <span class="etiqueta">Etapa 3</span>
+        <h2>Baixa dos títulos</h2>
+        <p>A baixa é o que faz o Bauner emitir as notas fiscais. Confira os números antes de gerar.</p>
+      </div>
     </div>
     <div class="arquivos um-so">
       <label class="arquivo" data-campo="contasBaunerNovo">
         <input type="file" accept=".xlsx,.xls" hidden>
-        <span class="icone" aria-hidden="true">🔄</span>
+        <span class="quadro"><svg class="ic"><use href="#i-atualizar"/></svg></span>
         <span class="titulo">Contas a receber atualizado</span>
         <span class="fonte">Bauner · depois de importar</span>
-        <span class="estado">clique ou arraste o arquivo</span>
+        <span class="estado">Selecionar arquivo</span>
       </label>
     </div>
-    <div class="barra-acao">
-      <span class="dica">Exporte com todos os status, para o sistema saber o que já foi liquidado.</span>
+    <div class="rodape-painel">
+      <span class="dica">Exporte com todos os status, para o sistema reconhecer o que já foi liquidado.</span>
       <button id="gerar2" class="principal" disabled>Conferir o que será baixado</button>
     </div>
     <p class="aviso" id="aviso2"></p>
 
     <div id="resultado2" hidden>
-      <div class="cartoes" id="cartoes2"></div>
-      <div class="tabela-caixa"><table id="motivos2"></table></div>
+      <div class="indicadores" id="cartoes2"></div>
+      <div class="tabela" id="caixaMotivos2"><table id="motivos2"></table></div>
       <label class="confirmacao">
         <input type="checkbox" id="confirmo">
-        <span>Conferi os números acima e quero gerar a baixa</span>
+        <span><strong>Conferi os números acima e autorizo a baixa.</strong> A baixa dispara a emissão das notas no Bauner.</span>
       </label>
       <div class="baixar" id="baixar2"></div>
     </div>
   </section>
 
-  <section class="cartao-secao" id="carga">
-    <div class="cabecalho-secao">
-      <h2>Carga única — clientes atrasados</h2>
-      <p>Roda uma vez só, para cadastrar no Bauner os alunos antigos que ainda não estão lá. Usa a base inteira e os clientes do Bauner que você subiu na etapa 1.</p>
+  <section class="painel" id="carga">
+    <div class="painel-topo">
+      <div>
+        <span class="etiqueta">Etapa 4 · uma vez só</span>
+        <h2>Carga de clientes atrasados</h2>
+        <p>Cadastra no Bauner os alunos antigos que nunca foram importados. Usa a base inteira e os clientes do Bauner enviados na etapa 1.</p>
+      </div>
     </div>
-    <div class="barra-acao">
-      <div class="periodo">
+    <div class="rodape-painel">
+      <div class="campos">
         <label>Clientes por lote <input type="number" id="lote" value="500" min="50" step="50"></label>
-        <span class="dica">o Bauner não aguenta tudo de uma vez</span>
+        <span class="dica">O Bauner não aceita tudo de uma vez</span>
       </div>
       <button id="gerarCarga" class="principal" disabled>Gerar lotes</button>
     </div>
     <p class="aviso" id="avisoCarga"></p>
     <div id="resultadoCarga" hidden>
-      <div class="cartoes" id="cartoesCarga"></div>
-      <div class="tabela-caixa"><table id="motivosCarga"></table></div>
+      <div class="indicadores" id="cartoesCarga"></div>
+      <div class="tabela" id="caixaMotivosCarga"><table id="motivosCarga"></table></div>
       <div class="baixar" id="baixarCarga"></div>
-      <p class="proximo">Importe um lote por vez, conferindo se o anterior terminou.</p>
+      <p class="nota">Importe um lote por vez, conferindo se o anterior terminou.</p>
     </div>
   </section>
 </main>
 
 <footer>
-  <span>Bridge Bauner · Tecnologia Brasker</span>
-  <span>Nenhum arquivo sai deste computador</span>
+  <div class="faixa">
+    <span>Bridge Bauner · Tecnologia Brasker</span>
+    <span>Nenhum arquivo sai deste computador</span>
+  </div>
 </footer>
 
 <script src="vendor/xlsx.full.min.js"></script>

@@ -13,7 +13,11 @@ const CAMPOS = {
 
 const dados = {};
 const $ = (s) => document.querySelector(s);
-const passo = (n) => document.querySelectorAll('.trilha li').forEach((li, i) => li.classList.toggle('ativo', i <= n - 1));
+// Marca a etapa atual e deixa as anteriores como concluídas.
+const passo = (n) => document.querySelectorAll('.etapas li').forEach((li, i) => {
+  li.classList.toggle('ativo', i === n - 1);
+  li.classList.toggle('feito', i < n - 1);
+});
 
 const dinheiro = (n) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
@@ -78,8 +82,8 @@ function atualizarBotao() {
 }
 
 function cartao(rotulo, valor, extra = '') {
-  return `<div class="cartao"><div class="valor">${valor}</div>
-    <div class="rotulo">${rotulo}</div>${extra ? `<div class="extra">${extra}</div>` : ''}</div>`;
+  return `<div class="cartao"><div class="rotulo">${rotulo}</div>
+    <div class="valor">${valor}</div>${extra ? `<div class="extra">${extra}</div>` : ''}</div>`;
 }
 
 let saidas = {};
