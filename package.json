@@ -1,0 +1,11 @@
+{
+  "name": "importador-velo-vix",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "exceljs": "^4.4.0"
+  },
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  }
+}

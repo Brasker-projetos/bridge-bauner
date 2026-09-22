@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Importador Velo Vix</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<header>
+  <h1>Importador Velo Vix</h1>
+  <p>Suba os relatórios do Angular e do Bauner. O sistema compara, trata e devolve as planilhas prontas para importar. <strong>Os arquivos não saem deste computador.</strong></p>
+</header>
+
+<main>
+  <section class="passo">
+    <h2><span class="n">1</span> Etapa 1 — Clientes e contas a receber</h2>
+
+    <div class="arquivos">
+      <label class="arquivo" data-campo="vendas">
+        <input type="file" accept=".xlsx,.xls" hidden>
+        <span class="titulo">Vendas realizadas</span>
+        <span class="fonte">Angular · todos os status</span>
+        <span class="estado">clique ou arraste</span>
+      </label>
+      <label class="arquivo" data-campo="clientesPeriodo">
+        <input type="file" accept=".xlsx,.xls" hidden>
+        <span class="titulo">Clientes do período</span>
+        <span class="fonte">Angular</span>
+        <span class="estado">clique ou arraste</span>
+      </label>
+      <label class="arquivo" data-campo="clientesBauner">
+        <input type="file" accept=".xlsx,.xls" hidden>
+        <span class="titulo">Clientes cadastrados</span>
+        <span class="fonte">Bauner</span>
+        <span class="estado">clique ou arraste</span>
+      </label>
+      <label class="arquivo" data-campo="contasBauner">
+        <input type="file" accept=".xlsx,.xls" hidden>
+        <span class="titulo">Contas a receber</span>
+        <span class="fonte">Bauner · todos os status</span>
+        <span class="estado">clique ou arraste</span>
+      </label>
+      <label class="arquivo opcional" data-campo="clientesBase">
+        <input type="file" accept=".xlsx,.xls" hidden>
+        <span class="titulo">Base inteira de clientes</span>
+        <span class="fonte">Angular · opcional</span>
+        <span class="estado">clique ou arraste</span>
+      </label>
+    </div>
+
+    <div class="periodo">
+      <label>Início <input type="date" id="inicio"></label>
+      <label>Fim <input type="date" id="fim"></label>
+      <span class="dica" id="dicaPeriodo">sugerido pelo relatório do Bauner</span>
+    </div>
+
+    <button id="gerar" disabled>Gerar planilhas</button>
+    <p class="aviso" id="aviso"></p>
+  </section>
+
+  <section class="passo resultado" id="resultado" hidden>
+    <h2><span class="n">2</span> Resultado</h2>
+    <div class="cartoes" id="cartoes"></div>
+    <table id="motivos"></table>
+    <p class="fechamento" id="fechamento"></p>
+    <div class="baixar" id="baixar"></div>
+    <p class="proximo">Importe no Bauner <strong>primeiro os clientes</strong> e depois as contas a receber. Em seguida exporte de novo as contas a receber do Bauner e siga para a etapa 3.</p>
+  </section>
+
+  <section class="passo" id="etapa2" hidden>
+    <h2><span class="n">3</span> Etapa 2 — Contas recebidas</h2>
+    <p class="explica">Esta é a baixa dos títulos, e é ela que faz o Bauner emitir as notas. Suba o relatório de contas a receber do Bauner <strong>exportado depois da importação</strong>, com todos os status.</p>
+    <div class="arquivos">
+      <label class="arquivo" data-campo="contasBaunerNovo">
+        <input type="file" accept=".xlsx,.xls" hidden>
+        <span class="titulo">Contas a receber atualizado</span>
+        <span class="fonte">Bauner · depois de importar</span>
+        <span class="estado">clique ou arraste</span>
+      </label>
+    </div>
+    <button id="gerar2" disabled>Conferir o que será baixado</button>
+    <p class="aviso" id="aviso2"></p>
+
+    <div id="resultado2" hidden>
+      <div class="cartoes" id="cartoes2"></div>
+      <table id="motivos2"></table>
+      <p class="confirmacao">
+        <label><input type="checkbox" id="confirmo"> Conferi os números acima e quero gerar a baixa</label>
+      </p>
+      <div class="baixar" id="baixar2"></div>
+    </div>
+  </section>
+
+  <section class="passo" id="carga">
+    <h2><span class="n">4</span> Carga única — clientes atrasados</h2>
+    <p class="explica">Roda uma vez só, para cadastrar no Bauner todos os alunos antigos que ainda não estão lá. Usa a <strong>base inteira de clientes</strong> e os <strong>clientes do Bauner</strong> que você subiu na etapa 1. O Bauner não aguenta tudo de uma vez, então sai em lotes.</p>
+    <div class="periodo">
+      <label>Clientes por lote <input type="number" id="lote" value="500" min="50" step="50"></label>
+      <button id="gerarCarga" disabled>Gerar lotes</button>
+    </div>
+    <p class="aviso" id="avisoCarga"></p>
+    <div id="resultadoCarga" hidden>
+      <div class="cartoes" id="cartoesCarga"></div>
+      <table id="motivosCarga"></table>
+      <div class="baixar" id="baixarCarga"></div>
+      <p class="proximo">Importe um lote por vez no Bauner, sempre conferindo se o anterior terminou.</p>
+    </div>
+  </section>
+</main>
+
+<script src="vendor/xlsx.full.min.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>
