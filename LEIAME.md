@@ -1,4 +1,4 @@
-# Importador Velo Vix (Angular → Bauner)
+# Bridge Bauner (Angular → Bauner)
 
 Página que recebe os relatórios do Angular e do Bauner, compara, trata os dados e
 gera as planilhas de importação do Bauner. Tudo roda no navegador: nenhum arquivo
@@ -27,4 +27,4 @@ npx http-server . -p 4173 -c-1
    baixa é o que dispara a nota fiscal.
 3. Carga única: divide em lotes os clientes antigos que ainda não estão no Bauner.
 
-A documentação do processo está em `I:\Meu Drive\Work\sistema-bpo`.
+A documentação do processo está em `I:\Meu Drive\Work\bridge-bauner`.

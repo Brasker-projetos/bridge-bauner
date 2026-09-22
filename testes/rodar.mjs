@@ -3,7 +3,7 @@
 import ExcelJS from 'exceljs';
 import { processarEtapa1, processarEtapa2, sugerePeriodo, paraData, iso } from '../regras.js';
 
-const FONTES = 'I:/Meu Drive/Work/sistema-bpo/00-fontes/';
+const FONTES = 'I:/Meu Drive/Work/bridge-bauner/00-fontes/';
 const A = {
   vendas: 'vendas-pedidos_export_20260915104553.xlsx',
   clientesPeriodo: 'usuarios-todos_export_20260915104106.xlsx',
