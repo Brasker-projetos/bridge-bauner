@@ -227,6 +227,8 @@ const MOTIVOS = {
   semCadastro: 'Cliente não está nos arquivos de clientes do Angular',
   semEmail: 'Cadastro sem e-mail — o Bauner não aceita',
   semNome: 'Cadastro sem nome — o Bauner não aceita',
+  jaExisteOutraColuna: 'Já existe no Bauner com o número da coluna "pedido" — não importar de novo',
+  possivelDuplicado: 'Possível duplicado — o Bauner já tem título deste cliente, com o mesmo valor e data, mas com outro número',
   semTitulo: 'Título não está no Bauner — importe as contas a receber antes',
   naoPendente: 'Título não está Pendente no Bauner',
   valorDiferente: 'Valor do Bauner diferente do valor da venda — conferir',
@@ -245,6 +247,89 @@ export function cadastroDaVenda(venda) {
   };
 }
 
+const chaveTitulo = (nome, valor, data) =>
+  `${semAcento(nome).replace(/\s+/g, ' ')}|${Number(valor).toFixed(2)}|${data}`;
+
+/**
+ * Títulos do Bauner cujo número não corresponde a nenhum pedido do Angular.
+ * Se um deles tiver o mesmo cliente, valor e data de uma venda, é a mesma
+ * venda lançada com outro número: importar de novo duplicaria, e o Bauner não
+ * barra, porque o número é diferente.
+ */
+function titulosSemPedido(vendas, contasBauner) {
+  const numeros = new Set();
+  for (const v of vendas) {
+    for (const k of ['id_do_pedido', 'pedido']) if (texto(v[k])) numeros.add(texto(v[k]));
+  }
+  const suspeitos = new Map(); // chave -> títulos (cada título pode ter duas datas)
+  contasBauner.forEach((t, i) => {
+    if (numeros.has(texto(t.Documento))) return;
+    if (texto(t.Status).toLowerCase() === 'cancelado') return;
+    const valor = numero(t.Valor);
+    if (!valor) return;
+    const datas = new Set(['Dt Emissão', 'Dt Vencimento'].map((c) => iso(paraData(t[c]))).filter(Boolean));
+    for (const d of datas) {
+      const k = chaveTitulo(t.Cliente, valor, d);
+      if (!suspeitos.has(k)) suspeitos.set(k, []);
+      suspeitos.get(k).push(i);
+    }
+  });
+  return suspeitos;
+}
+
+const dataBr = (d) => iso(d).split('-').reverse().join('/');
+
+/**
+ * Confere se o relatório do Bauner serve para comparar sem risco de duplicar.
+ * "bloqueio" impede gerar; "atencao" só avisa.
+ */
+export function diagnosticarBauner({ vendas = [], contasBauner = [], inicio = null } = {}) {
+  const avisos = [];
+  const ids = new Set(vendas.map((v) => texto(v.id_do_pedido)).filter(Boolean));
+  const pedidos = new Set(vendas.map((v) => texto(v.pedido)).filter(Boolean));
+  let porId = 0, porPedido = 0, menor = null;
+  const status = {};
+
+  for (const t of contasBauner) {
+    const doc = texto(t.Documento);
+    if (ids.has(doc)) porId++;
+    else if (pedidos.has(doc)) porPedido++;
+    const s = texto(t.Status) || '(sem status)';
+    status[s] = (status[s] || 0) + 1;
+    const d = paraData(t['Dt Emissão']);
+    if (d && (!menor || d < menor)) menor = d;
+  }
+
+  if (porPedido > 0 && porPedido >= porId) {
+    avisos.push({
+      nivel: 'bloqueio',
+      texto: `No relatório do Bauner, ${porPedido} títulos usam o número da coluna "pedido" do Angular e só ${porId} usam o "id_do_pedido". O sistema gera pelo "id_do_pedido", então o mesmo pedido entraria duas vezes com números diferentes. Chame a Tecnologia antes de importar.`,
+    });
+  } else if (porPedido > 0) {
+    avisos.push({
+      nivel: 'atencao',
+      texto: `${porPedido} títulos do Bauner usam o número da coluna "pedido" do Angular. Esses pedidos foram deixados de fora para não duplicar.`,
+    });
+  }
+
+  const temLiquidado = Object.keys(status).some((s) => s.toLowerCase() === 'liquidado');
+  if (contasBauner.length && !temLiquidado) {
+    avisos.push({
+      nivel: 'atencao',
+      texto: 'O relatório do Bauner não tem nenhum título Liquidado. Se ele foi exportado só com os Pendentes, os títulos já baixados parecem não existir e seriam gerados de novo. Se o período ainda não teve nenhuma baixa, pode seguir.',
+    });
+  }
+
+  if (inicio && menor && menor > inicio) {
+    avisos.push({
+      nivel: 'atencao',
+      texto: `O relatório do Bauner começa em ${dataBr(menor)}, depois do início do período (${dataBr(inicio)}). Um título desses primeiros dias que já esteja no Bauner não aparece para comparar. Exporte o Bauner a partir de uma data anterior, ou confirme que esses dias nunca foram importados.`,
+    });
+  }
+
+  return { avisos, porId, porPedido, status, bloqueado: avisos.some((a) => a.nivel === 'bloqueio') };
+}
+
 /**
  * Etapa 1: gera as linhas de clientes e de contas a receber.
  * Entradas: linhas já lidas dos relatórios.
@@ -261,6 +346,9 @@ export function processarEtapa1({
   const cadastros = indexaClientes(clientesPeriodo, clientesBase);
   const noBauner = indexaClientesBauner(clientesBauner);
   const titulos = indexaTitulos(contasBauner);
+  const suspeitos = titulosSemPedido(vendas, contasBauner);
+  const suspeitosUsados = new Set();
+  const diagnostico = diagnosticarBauner({ vendas, contasBauner, inicio });
 
   const naoEntraram = [];
   const contasReceber = [];
@@ -294,10 +382,27 @@ export function processarEtapa1({
       fora(venda, status === 'cancelado' ? MOTIVOS.canceladoBauner : MOTIVOS.jaExiste);
       continue;
     }
+    if (texto(venda.pedido) && titulos.has(texto(venda.pedido))) {
+      fora(venda, MOTIVOS.jaExisteOutraColuna);
+      continue;
+    }
 
     const valor = numero(venda.valor_da_unidade);
     if (!Number.isFinite(valor) || valor < 0) { fora(venda, MOTIVOS.valorInvalido); continue; }
     if (valor === 0) { fora(venda, MOTIVOS.valorZero); continue; }
+
+    // Mesmo cliente, valor e data de um título do Bauner com número estranho:
+    // segura a venda, e cada título suspeito só "explica" uma venda.
+    const chaves = [...new Set([iso(pago), iso(paraData(venda.data))].filter(Boolean))]
+      .map((d) => chaveTitulo(venda.nome, valor, d));
+    const suspeito = chaves
+      .flatMap((k) => suspeitos.get(k) || [])
+      .find((i) => !suspeitosUsados.has(i));
+    if (suspeito !== undefined) {
+      suspeitosUsados.add(suspeito);
+      fora(venda, MOTIVOS.possivelDuplicado);
+      continue;
+    }
 
     const cpf = digitos(venda.cpf);
     if (!cpf) { fora(venda, MOTIVOS.semCpf); continue; }
@@ -337,6 +442,7 @@ export function processarEtapa1({
     clientes,
     contasReceber,
     naoEntraram,
+    diagnostico,
     resumo: {
       vendasLidas: vendas.length,
       contasGeradas: contasReceber.length,

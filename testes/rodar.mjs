@@ -134,3 +134,39 @@ const faltando = carga.lotes.flat().filter((l) =>
   ['* Nome/Razão Social do Cliente', '* CNPJ/CPF', '* Tipo', '* E-mail', '* Endereço', '* Número', '* Bairro', '* Estado', '* Cidade', '* CEP']
     .some((c) => !String(l[c] ?? '').trim()));
 console.log('Obrigatórios preenchidos:', faltando.length === 0 ? 'OK' : `FALHOU — ${faltando.length} linhas incompletas`);
+
+// === Proteção contra duplicidade ===
+import { diagnosticarBauner } from '../regras.js';
+console.log('\n=== PROTEÇÃO CONTRA DUPLICIDADE ===');
+const base = processarEtapa1({ ...dados, ...periodo });
+console.log('Caso real — avisos:', base.diagnostico.avisos.map((a) => `[${a.nivel}] ${a.texto.slice(0, 70)}...`));
+console.log('Caso real — títulos reconhecidos pelo id_do_pedido:', base.diagnostico.porId, '| pela coluna pedido:', base.diagnostico.porPedido);
+console.log('Caso real — títulos gerados:', base.resumo.contasGeradas, base.resumo.porMotivo[Object.keys(base.resumo.porMotivo).find((k) => k.startsWith('Possível'))] || '(nenhum possível duplicado)');
+
+// 1) Bauner inteiro lançado com o número da outra coluna
+const pedidoDoId = new Map(dados.vendas.map((v) => [String(v.id_do_pedido), String(v.pedido)]));
+const outraColuna = dados.contasBauner.map((t) => ({ ...t, Documento: pedidoDoId.get(String(t.Documento)) || t.Documento }));
+const s1 = processarEtapa1({ ...dados, contasBauner: outraColuna, ...periodo });
+const reimportados1 = s1.contasReceber.filter((c) => dados.contasBauner.some((t) => String(t.Documento) === c.Documento)).length;
+console.log('\n1) Bauner com números da coluna "pedido":',
+  s1.diagnostico.bloqueado ? 'BLOQUEADO' : 'não bloqueou',
+  `| títulos que já existiam e seriam gerados de novo: ${reimportados1}`);
+
+// 2) Poucos títulos com número estranho (digitados à mão), mesmo cliente/valor/data
+const alvo = base.contasReceber.slice(0, 5);
+const estranhos = [...dados.contasBauner, ...alvo.map((c, i) => ({
+  Documento: `MANUAL-${i}`, Cliente: c.Cliente, Valor: c.Valor, 'Dt Emissão': c.Data, 'Dt Vencimento': c.Vencimento, Status: 'Pendente',
+}))];
+const s2 = processarEtapa1({ ...dados, contasBauner: estranhos, ...periodo });
+const segurados = s2.naoEntraram.filter((l) => l.Motivo.startsWith('Possível duplicado')).length;
+console.log('2) 5 títulos lançados à mão com outro número:', `${segurados} vendas seguradas como possível duplicado`,
+  `| títulos gerados ${base.resumo.contasGeradas} -> ${s2.resumo.contasGeradas}`);
+
+// 3) Relatório do Bauner começando depois do início do período
+const d3 = diagnosticarBauner({ vendas: dados.vendas, contasBauner: dados.contasBauner, inicio: paraData('2026-08-11') });
+console.log('3) Período desde 11/08 com Bauner começando em setembro:', d3.avisos.some((a) => a.texto.includes('começa em')) ? 'AVISOU' : 'não avisou');
+
+// 4) Relatório com Liquidados não dispara o aviso de "só pendentes"
+const comLiquidado = dados.contasBauner.map((t, i) => (i === 0 ? { ...t, Status: 'Liquidado' } : t));
+const d4 = diagnosticarBauner({ vendas: dados.vendas, contasBauner: comLiquidado });
+console.log('4) Relatório com Liquidado:', d4.avisos.some((a) => a.texto.includes('nenhum título Liquidado')) ? 'avisou (errado)' : 'sem aviso, correto');

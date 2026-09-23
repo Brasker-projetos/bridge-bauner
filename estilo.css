@@ -193,6 +193,17 @@ th, td { padding: 11px 16px; border-bottom: 1px solid var(--linha-clara); }
 tbody tr:last-child td, tr:last-child td { border-bottom: 0; }
 td.num, th.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
 
+.alertas { display: grid; gap: 10px; margin-bottom: 20px; }
+.alertas:empty { display: none; }
+.alerta {
+  border-radius: 7px; padding: 12px 16px; font-size: 14px; line-height: 1.5;
+  border: 1px solid; border-left-width: 3px;
+}
+.alerta strong { display: block; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 2px; }
+.alerta.ok { background: var(--ok-fundo); color: var(--ok); border-color: #c6e3d5; border-left-color: var(--ok); }
+.alerta.atencao { background: var(--atencao-fundo); color: var(--atencao); border-color: #ecdcb6; border-left-color: #d9a441; }
+.alerta.bloqueio { background: var(--erro-fundo); color: var(--erro); border-color: #f0d2ce; border-left-color: var(--erro); }
+
 .fechamento {
   display: flex; align-items: center; gap: 10px;
   border-radius: 7px; padding: 12px 16px; margin: 0 0 20px; font-size: 14.5px; font-weight: 500;

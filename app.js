@@ -88,8 +88,25 @@ function cartao(rotulo, valor, extra = '') {
 
 let saidas = {};
 
+const TITULO_ALERTA = { ok: 'Números conferidos', atencao: 'Atenção', bloqueio: 'Importação bloqueada' };
+
+function mostrarAlertas(diag) {
+  const itens = [];
+  if (diag.porId > 0 && !diag.bloqueado) {
+    itens.push({
+      nivel: 'ok',
+      texto: `${diag.porId} títulos que já estão no Bauner usam o mesmo número que o sistema gera (coluna "id_do_pedido" do Angular). Esses não vão entrar de novo.`,
+    });
+  }
+  itens.push(...diag.avisos);
+  $('#alertasBauner').innerHTML = itens
+    .map((a) => `<div class="alerta ${a.nivel}"><strong>${TITULO_ALERTA[a.nivel]}</strong>${a.texto}</div>`)
+    .join('');
+}
+
 function mostrar(r) {
   const av = r.resumo.avisos;
+  mostrarAlertas(r.diagnostico);
   $('#cartoes').innerHTML = [
     cartao('vendas lidas', r.resumo.vendasLidas),
     cartao('contas a receber', r.resumo.contasGeradas, dinheiro(r.resumo.valorContas)),
@@ -124,6 +141,8 @@ function mostrar(r) {
     .join('');
   $('#baixar').querySelectorAll('button').forEach((b) => {
     b.onclick = () => baixar(b.dataset.nome, periodo);
+    // Com risco de número trocado, só a lista do que ficou de fora pode sair.
+    if (r.diagnostico.bloqueado && b.dataset.nome !== 'Não entraram') b.disabled = true;
   });
   $('#resultado').hidden = false;
   $('#etapa2').hidden = false;
