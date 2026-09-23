@@ -111,7 +111,7 @@ function mostrar(r) {
     ? `Fechou: as ${total} vendas do arquivo estão todas explicadas.`
     : `Atenção: ${total} destinos para ${r.resumo.vendasLidas} vendas.`;
 
-  const periodo = `${$('#inicio').value} a ${$('#fim').value}`;
+  const periodo = `${dataBr($('#inicio').value)} a ${dataBr($('#fim').value)}`;
   saidas = {
     'Importar Clientes': { linhas: r.clientes, aba: 'Clientes' },
     'Importar Contas a Receber': { linhas: r.contasReceber, aba: 'Importar Contas a Receber' },
@@ -144,7 +144,7 @@ function mostrar2(r) {
       linhas.map(([m, v]) => `<tr><td>${m}</td><td class="num">${v.qtd}</td><td class="num">${dinheiro(v.valor)}</td></tr>`).join('')
     : '';
 
-  const periodo = `${$('#inicio').value} a ${$('#fim').value}`;
+  const periodo = `${dataBr($('#inicio').value)} a ${dataBr($('#fim').value)}`;
   saidas['Importar Contas Recebidas'] = { linhas: r.recebidas, aba: 'Folha 1' };
   if (r.naoEntraram.length) saidas['Não entraram na baixa'] = { linhas: r.naoEntraram, aba: 'Não entraram' };
 
@@ -170,9 +170,46 @@ function mostrar2(r) {
   passo(3);
 }
 
+// As regras trabalham com datas "aaaa-mm-dd". Na planilha elas viram data de
+// verdade, exibida como dd/mm/aaaa. O número de série do Excel é calculado
+// aqui, porque a biblioteca, ao converter um Date, aplica o fuso histórico de
+// São Paulo (-3h06 em 1899) e a data cai um dia antes.
+const DATA_ISO = /^(\d{4})-(\d{2})-(\d{2})$/;
+const FORMATO_DATA = 'dd/mm/yyyy';
+const serialExcel = (a, m, d) => (Date.UTC(a, m - 1, d) - Date.UTC(1899, 11, 30)) / 86400000;
+
+function planilhaComDatas(linhas) {
+  const colunasData = new Set();
+  const convertidas = linhas.map((linha) => {
+    const out = {};
+    for (const [k, v] of Object.entries(linha)) {
+      const m = typeof v === 'string' && v.match(DATA_ISO);
+      if (m) colunasData.add(k);
+      out[k] = m ? serialExcel(+m[1], +m[2], +m[3]) : v;
+    }
+    return out;
+  });
+  const ws = XLSX.utils.json_to_sheet(convertidas);
+  const cabecalho = Object.keys(convertidas[0] || {});
+  const intervalo = XLSX.utils.decode_range(ws['!ref'] || 'A1');
+  cabecalho.forEach((nome, c) => {
+    if (!colunasData.has(nome)) return;
+    for (let r = 1; r <= intervalo.e.r; r++) {
+      const cel = ws[XLSX.utils.encode_cell({ r, c })];
+      if (cel && cel.t === 'n') { cel.z = FORMATO_DATA; delete cel.w; }
+    }
+  });
+  return ws;
+}
+
+const dataBr = (isoTexto) => {
+  const m = String(isoTexto || '').match(DATA_ISO);
+  return m ? `${m[3]}-${m[2]}-${m[1]}` : isoTexto;
+};
+
 function baixar(nome, periodo) {
   const { linhas, aba } = saidas[nome];
-  const ws = XLSX.utils.json_to_sheet(linhas);
+  const ws = planilhaComDatas(linhas);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, aba);
   XLSX.writeFile(wb, `${nome} ${periodo}.xlsx`);
