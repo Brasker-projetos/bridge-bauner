@@ -14,7 +14,9 @@ export const ENDERECO_PADRAO = {
 };
 
 export const FIXOS = {
-  categoria: 'Receitas de Serviços',
+  // Categoria que o dashboard do Bauner lê (pedido da Carla em 24/09). A planilha
+  // do Edival ainda usava 'Receitas de Serviços', sem o sufixo.
+  categoria: 'Receitas de Serviços - Angular',
   centro: 'Único',
   gerarCobranca: 'Não',
   emitirNota: 'Sim',
