@@ -69,12 +69,21 @@ export function formataUf(uf) {
   return NOMES_UF[semAcento(uf)] || '';
 }
 
-// O Bauner recusa telefone com o DDI 55 na frente.
+// O Bauner só aceita DDD + número, no formato "27 99960-7183" (celular) ou
+// "27 3322-4455" (fixo). Tira o DDI (+55 ou 55) e o zero de discagem na frente.
+// Um número de 11 dígitos começando com 55 não perde nada: 55 também é DDD (RS).
+// O que não virar telefone válido fica vazio, porque o campo não é obrigatório.
 export function formataTelefone(tel) {
   let d = digitos(tel);
   if (d.length >= 12 && d.startsWith('55')) d = d.slice(2);
-  return d.length === 10 || d.length === 11 ? d : '';
+  if (d.length >= 11 && d.startsWith('0')) d = d.slice(1);
+  if (d.length === 11) return `${d.slice(0, 2)} ${d.slice(2, 7)}-${d.slice(7)}`;
+  if (d.length === 10) return `${d.slice(0, 2)} ${d.slice(2, 6)}-${d.slice(6)}`;
+  return '';
 }
+
+// Se o telefone foi mexido (DDI tirado ou número descartado), conta como aviso.
+const telefoneMudou = (tel) => digitos(tel) !== digitos(formataTelefone(tel));
 
 export const numeroEndereco = (n) => {
   const d = digitos(n);
@@ -428,7 +437,7 @@ export function processarEtapa1({
     const { linha, usouEnderecoPadrao, semNumero } = montaCliente(cadastro);
     if (usouEnderecoPadrao) avisos.enderecoPadrao++;
     if (semNumero) avisos.semNumero++;
-    if (digitos(cadastro.telefone) !== formataTelefone(cadastro.telefone)) avisos.telefoneCorrigido++;
+    if (telefoneMudou(cadastro.telefone)) avisos.telefoneCorrigido++;
     if (cadastro.origem === 'venda') avisos.cadastroPelaVenda++;
     clientes.push(linha);
   }
@@ -587,7 +596,7 @@ export function processarCargaUnica({
     const { linha, usouEnderecoPadrao, semNumero } = montaCliente(cadastro);
     if (usouEnderecoPadrao) avisos.enderecoPadrao++;
     if (semNumero) avisos.semNumero++;
-    if (digitos(cadastro.telefone) !== formataTelefone(cadastro.telefone)) avisos.telefoneCorrigido++;
+    if (telefoneMudou(cadastro.telefone)) avisos.telefoneCorrigido++;
     linhas.push(linha);
   }
 
